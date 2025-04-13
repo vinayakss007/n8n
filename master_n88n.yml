@@ -1,0 +1,41 @@
+name: Deploy N8N to Azure
+
+on:
+  push:
+    branches:
+      - master  # or main if your default branch is main
+
+env:
+  N8N_BASIC_AUTH_ACTIVE: true
+  N8N_BASIC_AUTH_USER: vinayak
+  N8N_BASIC_AUTH_PASSWORD: vinayak
+  PORT: 8080
+  N8N_PORT: 8080
+  NODE_ENV: production
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '22' # or version required by N8N
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: (Optional) Build the project
+        run: npm run build
+        # uncomment only if your project needs building
+
+      - name: Deploy to Azure Web App
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: n88n # Replace this
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+          package: .
